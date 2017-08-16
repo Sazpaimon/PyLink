@@ -1,3 +1,9 @@
+pylink (1.2.0-0utopia1~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+
+ -- James Lu <bitflip3@gmail.com>  Wed, 16 Aug 2017 16:50:14 -0700
+
 pylink (1.2.0-0utopia1) unstable; urgency=medium
 
   * New stable release.

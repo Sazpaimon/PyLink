@@ -1,3 +1,9 @@
+pylink (1.2.1-0utopia1ppa2) artful; urgency=medium
+
+  * New stable release.
+
+ -- James Lu <bitflip3@gmail.com>  Sat, 18 Nov 2017 01:57:47 -0800
+
 pylink (1.2.0-0utopia1ppa1) artful; urgency=medium
 
   * PPA build refresh.

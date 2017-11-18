@@ -267,6 +267,7 @@ class TS6Protocol(TS6BaseProtocol):
                         'op': 'o', 'voice': 'v', 'ban': 'b', 'key': 'k', 'limit':
                         'l', 'moderated': 'm', 'noextmsg': 'n', 'noknock': 'p',
                         'secret': 's', 'topiclock': 't', 'inviteonly': 'i',
+                        'private': 'p',
                          # charybdis-specific modes:
                         'quiet': 'q', 'redirect': 'f', 'freetarget': 'F',
                         'joinflood': 'j', 'largebanlist': 'L', 'permanent': 'P',
@@ -502,7 +503,7 @@ class TS6Protocol(TS6BaseProtocol):
         self.check_nick_collision(nick)
         ts, modes, ident, host, ip, uid, realhost, accountname, realname = args[2:11]
         if realhost == '*':
-            realhost = None
+            realhost = host
 
         log.debug('(%s) handle_euid got args: nick=%s ts=%s uid=%s ident=%s '
                   'host=%s realname=%s realhost=%s ip=%s', self.irc.name, nick, ts, uid,

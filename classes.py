@@ -90,20 +90,27 @@ class Irc(utils.DeprecatedAttributesObject):
         """
         try:
             channels = conf.conf['logging']['channels'][self.name]
-        except KeyError:  # Not set up; just ignore.
+        except (KeyError, TypeError):  # Not set up; just ignore.
             return
 
         log.debug('(%s) Setting up channel logging to channels %r', self.name,
                   channels)
 
+        # Only create handlers if they haven't already been set up.
         if not self.loghandlers:
-            # Only create handlers if they haven't already been set up.
+            if not isinstance(channels, dict):
+                log.warning('(%s) Got invalid channel logging configuration %r; are your indentation '
+                            'and block commenting consistent?', self.name, channels)
+                return
 
             for channel, chandata in channels.items():
                 # Fetch the log level for this channel block.
                 level = None
-                if chandata is not None:
+                if isinstance(chandata, dict):
                     level = chandata.get('loglevel')
+                else:
+                    log.warning('(%s) Got invalid channel logging pair %r: %r; are your indentation '
+                                'and block commenting consistent?', self.name, filename, config)
 
                 handler = PyLinkChannelLogger(self, channel, level=level)
                 self.loghandlers.append(handler)
@@ -1220,18 +1227,16 @@ class Irc(utils.DeprecatedAttributesObject):
                     # HACK: support CIDR hosts in the hosts portion
                     try:
                         header, cidrtarget = glob.split('@', 1)
-                        log.debug('(%s) Processing CIDRs for %s (full host: %s)', self.name,
-                                  cidrtarget, glob)
                         # Try to parse the host portion as a CIDR range
                         network = ipaddress.ip_network(cidrtarget)
 
-                        log.debug('(%s) Found CIDR for %s, replacing target host with IP %s', self.name,
-                                  realhost, target)
                         real_ip = self.users[target].ip
                         if ipaddress.ip_address(real_ip) in network:
                             # If the CIDR matches, hack around the host matcher by pretending that
                             # the lookup target was the IP and not the CIDR range!
                             glob = '@'.join((header, real_ip))
+                            log.debug('(%s) Found matching CIDR %s for %s, replacing target glob with IP %s', self.name,
+                                      cidrtarget, target, real_ip)
                     except ValueError:
                         pass
 

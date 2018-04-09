@@ -1,3 +1,55 @@
+# PyLink 1.3-beta1 (2018-04-07)
+The 1.3 update focuses on backporting some commonly requested and useful features from the WIP 2.0 branch. This beta release includes all changes from 1.2.1, plus the following:
+
+#### New features
+- **Backported the launcher from 2.0-alpha2**:
+    - Added support for daemonization via the `--daemon/-d` option. [issue#187](https://github.com/GLolol/PyLink/issues/187)
+    - Added support for shutdown/restart/rehash via the command line. [issue#244](https://github.com/GLolol/PyLink/issues/244)
+    - The launcher now detects and removes stale PID files when `psutil` (an optional dependency) is installed, making restarting from crashes a more streamlined process. [issue#512](https://github.com/GLolol/PyLink/issues/512)
+    - PID file checking is now enabled by default, with the `--check-pid/-c` option retained as a no-op option for compatibility with PyLink <= 1.2
+    - Following 2.0 changes, sending SIGUSR1 to the PyLink daemon now triggers a rehash (along with SIGHUP).
+- Service bot idents, hosts, and realnames can now be configured globally and on a per-network basis. [issue#281](https://github.com/GLolol/PyLink/issues/281)
+- Relay server suffix is now configurable by network (`servers::<netname>::relay_server_suffix` option). [issue#462](https://github.com/GLolol/PyLink/issues/462)
+- Login blocks can now be restricted to specific networks, opered users, and hostmasks. [issue#502](https://github.com/GLolol/PyLink/issues/502)
+- Relay now supports relaying more channel modes, including inspircd blockhighlight +V and exemptchanops +X (the whitelist was synced with 2.0-alpha3)
+
+#### Bug fixes
+- automode: fix errors when managing channels with multiple #'s in its name
+- protocols/p10: fix the `use_hashed_cloaks` option not working correctly (it mistakenly read the value of `use_account_cloaks` instead)
+- relay_clientbot: fix `@#channel` messages being relayed to channels other than the target
+- Fixed sporadic disconnect issues on `BlockingIOError`, `ssl.SSLWantReadError`, and `ssl.SSLWantWriteError`
+- protocols/unreal: fix the wrong hook name being sent when receiving legacy (Unreal 3.2) user introductions
+- global: ignore empty `global:` configuration blocks
+
+#### Misc changes
+- Config loading now uses `yaml.safe_load()` instead of `yaml.load()` so that arbitrary code cannot be executed. [issue#589](https://github.com/GLolol/PyLink/issues/589)
+- Significantly revised example-conf for wording and consistency.
+- protocols/unreal: bumped protocol version to 4017 (no changes needed)
+
+# PyLink 1.2.1
+The "Dancer" release. Changes from 1.2.0:
+
+#### Bug fixes
+- unreal: fix TypeError when relaying prefix modes via `mode()`
+- Fix wrong database and PID filenames if the config file name includes a period (".")
+- automode: don't send empty mode lines if no users match the ACL
+- networks: check in "remote" that the remote network is actually connected
+- Fix commonly reported crashes on `logging:` config syntax errors ([49136d5](https://github.com/GLolol/PyLink/commit/49136d5abd609fd5e3ba2ec2e42a0443118e62ab))
+- Backported fixes from 2.0-dev:
+    - p10: fix wrong hook name for user introduction
+    - clientbot: warn when an outgoing message is blocked (e.g. due to bans) (#497)
+    - ts6: fix setting real host of users to 'None' if it wasn't given
+
+#### Misc changes
+- Removed incorrect descriptions regarding P10 `extended_accounts`. Both X3 and atheme support extended accounts, and this needs to match your IRCd settings regardless.
+- Updated definitions in `channel/user-modes.csv`.
+
+#### Internal improvements
+- Backported improvements from 2.0-dev:
+    - Fix support for Hybrid 8.x trunk
+    - Minor logging cleanup for relay and `Irc.matchHost()`.
+    - Fix cmode `+p` mapping on TS6 networks.
+
 # PyLink 1.2.0
 The "Dragons" release. Changes since 1.2.0-rc1:
 

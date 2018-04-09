@@ -92,6 +92,16 @@ login:
             # (plain text) for backwards compatibility.
             encrypted: true
 
+            # Optional: allows limiting this login to users from certain networks only (case sensitive).
+            #networks: ["network1", "network2"]
+
+            # Optional: allows limiting this login to opered users
+            #require_oper: false
+
+            # Optional: requires the user to match any of the following hosts. Extended targets
+            # are supported here as well.
+            #hosts: ["*!*@localhost", "*!*@trusted.isp"]
+
 permissions:
     # Permissions are described in more detail in example-permissions.yml, if you want to
     # customize permissions further.
@@ -122,21 +132,22 @@ servers:
         #bindhost: 1.2.3.4
 
         # The full network name, used by plugins.
-        netname: "InspIRCd Network"
+        netname: "Change this"
 
         # Hostname we will use to connect to the remote server
         hostname: "pylink.yournet.local"
 
-        # SID - required for TS6 and TS6-like servers. This must be three characters:
-        # the first char must be a digit [0-9], and the remaining two chars may
-        # be either uppercase letters [A-Z] or digits.
+        # Sets the server ID (SID) that the main PyLink server should use.
+        # For TS6-like servers (InspIRCd, Charybdis, UnrealIRCd, etc.), this
+        # must be three characters: the first char must be a digit [0-9], and
+        # the remaining two may be either uppercase letters [A-Z] or digits.
         sid: "0PY"
 
-        # SID range - the range of SIDs PyLink is allowed to use to generate
-        # server IDs. On TS6, this should be a combination of digits, letters,
-        # and #'s. Each # denotes a range (0-9A-Z) of characters that can be
-        # used by PyLink to generate appropriate SIDs. You will want to make
-        # sure no other servers are using this range.
+        # Server ID range: this specifies the range of server IDs that PyLink
+        # may use for subservers such as relay. On TS6, this should be a
+        # combination of digits, letters, and #'s. Each # denotes a range (0-9A-Z)
+        # of characters that can be used by PyLink to generate appropriate SIDs.
+        # You will want to make sure no other servers are using this range.
         # There must be at least one # in this entry.
         sidrange: "8##"
 
@@ -144,7 +155,7 @@ servers:
         # configure channels per service using keys in the name of "<servicename>_channels"
         # Comment out or remove these keys if you don't want service bots# to join any channels by
         # default.
-        channels: ["#pylink"]
+        #channels: ["#pylink"]
         #pylink_channels: ["#services"]
         #automode_channels: ["#chat"]
 
@@ -154,7 +165,7 @@ servers:
 
         # Sets autoconnect delay - comment this out or set the value below 1 to
         # disable autoconnect entirely.
-        autoconnect: 5
+        autoconnect: 10
 
         # Optional autoconnect settings:
         # Defines whether we should multiply the autoconnect delay by a certain value every time
@@ -209,141 +220,165 @@ servers:
         # IPs of other networks' users.
         #relay_no_ips: true
 
+        # If relay nick tagging is disabled, this option specifies a list of nick globs to always
+        # tag when introducing remote users *onto* this network.
+        #relay_forcetag_nicks: ["someuser", "Guest*"]
+
         # Determines whether relay will tag nicks on this network. This overrides the relay::tag_nicks
         # option on a per network-basis.
         #relay_tag_nicks: true
 
-    ts6net:
+        # Sets the suffix that relay subservers on this network should use.
+        # If not specified per network, this falls back to the value at
+        # relay::server_suffix, or "relay" if that is also not set.
+        #relay_server_suffix: "relay.yournet.net"
+
+    unrealnet:
         ip: ::1
+        port: 8067
 
         # Determines whether IPv6 should be used for this connection. Should the ip:
         # above be a hostname instead of an IP, this will also affect whether A records
         # (no IPv6) or AAAA records (IPv6) will be used in resolving it.
         ipv6: yes
 
-        port: 7000
-        recvpass: "abcd"
-        sendpass: "abcd"
-        hostname: "pylink.example.com"
-        sid: "8PY"
-        netname: "some TS6 network"
-        sidrange: "8P#"
-
-        protocol: "ts6"
-        autoconnect: 5
-
-        # Note: /'s in nicks are automatically converted to |'s for TS6
-        # networks (charybdis, etc.), since they don't allow "/" in nicks.
-        separator: "|"
-
-        # The following options are specific to TS6 servers:
-        # Toggles owner (+y), admin (+a), and halfop (+h) support for
-        # shadowircd/elemental-ircd.
-        # This defaults to off for the best compatibility.
-        use_owner: false
-        use_admin: false
-        use_halfop: false
-
-        # Toggles support of shadowircd/elemental-ircd specific channel modes:
-        # +T (no notice), +u (hidden ban list), +E (no kicks), +J (blocks kickrejoin),
-        # +K (no repeat messages), +d (no nick changes), and user modes:
-        # +B (bot), +C (blocks CTCP), +D (deaf), +V (no invites), +I (hides WHOIS channel list)
-        use_elemental_modes: false
-
-    unrealnet:
-        ip: 1.2.3.4
-        port: 8067
-
         # Received and sent passwords. For passwordless links using SSL fingerprints, simply set
         # these two fields to "*" and enable SSL with a cert and key file.
         recvpass: "coffee"
         sendpass: "tea"
+
         #ssl: true
         #ssl_certfile: mycert.pem
         #ssl_keyfile: mycert.pem
-
         hostname: "pylink.example.com"
         sid: "2PY"
-        netname: "This should match your UnrealIRCd config"
         sidrange: "8##"
         protocol: "unreal"
-        autoconnect: 5
+        autoconnect: 10
 
-        # You can also define network-specific nicks and idents for various service
-        # bots, using the configuration options "servicename_nick" and "servicename_ident".
+        # Sets the full network name, used for display purposes.
+        netname: "Network name"
+
+        # You can also define network-specific nicks, idents, and hosts for various service
+        # bots, using the configuration options "servicename_nick", etc.
         #pylink_nick: MagicServ
         #pylink_ident: magicserv
+        #pylink_host: magicserv.mynet.net
+        #pylink_realname: Magic Link Service
         #games_nick: MagicGames
         #games_ident: magicgames
+        #games_host: games.mynet.net
+        #games_realname: Magic Games Service
 
     nefarious:
         ip: somenet.ddns.local
-        #ipv6: false
         port: 45454
-        recvpass: "recv"
-        sendpass: "send"
-        hostname: "pylink.midnight.vpn"
 
-        # For P10, the SID and SID range options are just numbers. Make sure nothing
-        # else is using the range you're reserving for PyLink.
+        # When the IP field is set to a hostname, this option determines whether IPv4 or IPv6 should
+        # be used for the connection.
+        #ipv6: false
+
+        recvpass: "PASS123"
+        sendpass: "PASS321"
+        hostname: "pylink.somenet.ddns.local"
+
+        # For P10, the SID and SID range options correspond to P10 server numerics. The PyLink
+        # "sid" should be the numeric of the main server, and "sidrange" should be a range of
+        # numerics that subservers (e.g. for relay) can use.
+        # Make sure no other servers are in the numeric range you're reserving for PyLink, or you
+        # may get conflicts.
         sid: 50
         sidrange: "100-150"
-        channels: ["#lounge"]
+        #channels: ["#lounge"]
         protocol: p10
-        autoconnect: 5
-        netname: "Nefarious test server"
+        autoconnect: 10
+        netname: "Network name"
+
+        # Configures the relay separator. Note: /'s in nicks are automatically translated to |
+        # for IRCds other than Unreal and InspIRCd, since they are not supported in nicks.
+        #separator: "|"
 
         ### The following options are specific to P10 servers:
         # Determines whether extended accounts should be used for this network.
         # For Nefarious, this **MUST** match the EXTENDED_ACCOUNTS setting in your IRCd configuration.
-        # Disable this if you are using X3, and leave it on for any other service package
-        # (atheme, etc.)
         # For other P10 IRCds, this should be set to FALSE.
         use_extended_accounts: true
 
-        # Sets the IRCd type. The following options are supported here: 'nefarious', 'snircd', 'ircu', and
-        # 'generic'. This defaults to 'nefarious'.
+        # Sets the IRCd type. The following options are supported here: 'nefarious', 'snircd', 'ircu',
+        # and 'generic'. This defaults to 'nefarious'.
         # With this key set to 'nefarious', FAKE (external vHost changing) and SETHOST (host changing
         # for PyLink / relay clients) are enabled, along with a set of modes tailored to Nefarious.
 
         # With this key set to 'snircd', SETHOST and a set of modes tailored to snircd are enabled.
-        # vHost changing of other users (e.g. via the changehost plugin) is not supported.
+        # Host changing for other users (e.g. via the changehost plugin) is not supported.
 
         # With this key set to 'ircu', a set of modes tailored to IRCu is enabled.
-        # vHost changing is not supported.
+        # Host changing is not supported.
 
         # With this key set to 'generic', neither of these host changing features are enabled
         # and a baseline RFC1459 mode set is used. This configuration is not officially supported.
         p10_ircd: nefarious
 
         # Determines whether account-based cloaks should be used (someone.users.yournet.org
-        # format). This should match your IRCd configuration:
+        # format). This setting MUST match your IRCd configuration.
         # On Nefarious, ENABLE this if HOST_HIDING_STYLE is set to either 1 or 3.
         # On other P10 IRCds, ENABLE this if HOST_HIDING is set to TRUE.
         use_account_cloaks: false
 
-        # The cloak suffix to be used for account-based cloaks. This **MUST** match your
+        # The cloak suffix to be used for account-based cloaks. This MUST match your
         # IRCd configuration if use_account_cloaks is enabled.
         cloak_suffix: "users.yournet.org"
 
-        ### The following options are specific to Nefarious servers and should be set to false if
-        ### you're using another P10 IRCd (unless your variant supports them as well):
-        # Halfop is optional in Nefarious. This should match your IRCd configuration.
+        ### The following options are specific to Nefarious and should be disabled unless
+        #   you're using another P10 variant explicitly supporting them:
+        # Halfop is optional in Nefarious. This setting should match your IRCd configuration.
         use_halfop: false
 
         # Determines whether account-based cloaks should be used for opers
         # (someone.opers.yournet.org format). If use_account_cloaks is disabled,
-        # this will have no effect. This should match your IRCd configuration:
+        # this will have no effect. This setting MUST match your IRCd configuration.
         use_oper_account_cloaks: false
 
-        # The cloak suffix to be used for IRCop account-based cloaks. This **MUST** match your
+        # The cloak suffix to be used for IRCop account-based cloaks. This MUST match your
         # IRCd configuration if use_oper_account_cloaks is enabled.
         oper_cloak_suffix: "staff.yournet.org"
 
         # Determines whether UnrealIRCd-style hashed-host cloaks will be used.
-        # This should match your IRCd configuration:
+        # This setting should match your IRCd configuration.
         # ENABLE this if HOST_HIDING_STYLE is set to either 2 or 3.
         use_hashed_cloaks: false
+
+    ts6net:
+        ip: 1.2.3.4
+        port: 7000
+        recvpass: "abcd"
+        sendpass: "abcd"
+        hostname: "pylink.example.com"
+        sid: "8PY"
+        netname: "Network name"
+        sidrange: "8##"
+
+        protocol: "ts6"
+        autoconnect: 10
+
+        # Note: /'s in nicks are automatically converted to |'s for TS6
+        # networks (charybdis, etc.), since they don't allow "/" in nicks.
+        #separator: "|"
+
+        ### The following options are specific to TS6 servers:
+        # Toggles owner (+y), admin (+a), and halfop (+h) support for
+        # shadowircd/elemental-ircd.
+        # These default to off for the best compatibility.
+        #use_owner: false
+        #use_admin: false
+        #use_halfop: false
+
+        # Toggles support of shadowircd/elemental-ircd specific channel modes:
+        # +T (no notice), +u (hidden ban list), +E (no kicks), +J (blocks kickrejoin),
+        # +K (no repeat messages), +d (no nick changes), and user modes:
+        # +B (bot), +C (blocks CTCP), +D (deaf), +V (no invites), +I (hides WHOIS channel list)
+        # This defaults to false.
+        #use_elemental_modes: false
 
     # Sample Clientbot configuration, if you want to connect PyLink as a bot to relay somewhere
     # (or do other bot things).
@@ -351,15 +386,14 @@ servers:
         ip: 1.2.3.4
         port: 6697
 
-        # Server password (optional). Some networks also forward this to NickServ, so you can
-        # use it to log in on connect.
+        # Optional server password.
         #sendpass: "wastedbytes103"
 
-        channels: ["#this-works-as-usual"]
+        netname: "Network name"
+        #channels: ["#this-works-as-usual"]
         protocol: "clientbot"
 
-        # Once again, you can override the nick and ident of service bots on specific networks using
-        # the "servicename_nick" and "servicename_ident" options.
+        # You can set the PyLink bot nick and ident using the "pylink_nick" and "pylink_ident" options.
         #pylink_nick: pybot
         #pylink_ident: pybot
 
@@ -369,13 +403,28 @@ servers:
         #ssl_certfile: mycert.pem
         #ssl_keyfile: mycert.pem
 
+        # Autoconnect works as usual.
+        autoconnect: 30
+
+        # Message throttling: when set to a non-zero value, only one message will be sent every X
+        # seconds. If your bot is constantly running into Excess Flood errors, raising this to
+        # something like 0.5 or 1.0 should help. Defaults to 0.005 if not set.
+        throttle_time: 0.3
+
+        # Determines whether messages from unknown clients (servers, clients not sharing in a -n
+        # channel, etc.) should be forwarded via the PyLink server. If this is disabled, these
+        # messages will be silently dropped. This overrides the "accept_weird_senders" option in the
+        # "relay:" configuration block, and defaults to True for consistency with older releases.
+        #relay_weird_senders: false
+
+        ### The following options are specific to Clientbot servers:
         # SASL login: for mechanisms, only EXTERNAL (SSL cert) and PLAIN (username and password)
         # are supported so far.
         # SASL PLAIN requires the sasl_username and sasl_password options to be set, while
         # SASL EXTERNAL requires ssl, ssl_certfile, and ssl_keyfile to work.
         #sasl_mechanism: "PLAIN"
-        #sasl_username: "mIRCsKripterz"
-        #sasl_password: "DownLoaditn00b!!!"
+        #sasl_username: "abc"
+        #sasl_password: "somestrangepassword"
 
         # Defines the SASL timeout - this defaults to 15 seconds.
         #sasl_timeout: 15
@@ -383,16 +432,9 @@ servers:
         # If this option is enabled, the bot will attempt SASL authentication even after it's
         # connected, as services become available throughout netsplits and reconnects.
         # Note: This requires an IRC server capable of IRCv3.2 cap-notify and sasl:
-        # InspIRCd 3.x and charybdis 4+ (and derivatives) are some compatible examples (as of 2016-12-19)
+        # InspIRCd 3.x and charybdis 4+ are some compatible IRCds as of 2016-12-19.
+        # This defaults to false.
         #sasl_reauth: true
-
-        # Autoconnect works like usual.
-        autoconnect: 30
-
-        # Message throttling: when set to a non-zero value, only one message will be sent every X
-        # seconds. If your bot is constantly running into Excess Flood errors, raising this to
-        # something like 0.5 or 1.0 should help. Defaults to 0.005 if not set.
-        throttle_time: 0.3
 
         # Clientbot also supports auto perform, using raw IRC messages.
         #autoperform:
@@ -403,12 +445,6 @@ servers:
         # entire PyLink service than what's desired, even when PyLink is only connected as a bot.
         # This defaults to false if not specified.
         #track_oper_statuses: false
-
-        # Determines whether messages from unknown clients (servers, clients not sharing in a -n
-        # channel, etc.) should be forwarded via the PyLink server. If this is disabled, these
-        # messages will be silently dropped. This overrides the "accept_weird_senders" option in the
-        # "relay:" configuration block, and defaults to True for consistency with older releases.
-        #relay_weird_senders: false
 
 # Plugins to load (omit the .py extension)
 plugins:
@@ -631,7 +667,8 @@ relay:
     allow_clientbot_pms: false
 
     # Sets the suffix that relay subservers should use. Defaults to "relay" (as in net1.relay,
-    # net2.relay, etc.) if not specified.
+    # net2.relay, etc.) if not specified. This can also be set per-network via
+    # servers::<netname>::relay_server_suffix.
     #server_suffix: "relay.yournet.net"
 
     # Sets whether Clientbot mode sync will be enabled. Valid options:
@@ -712,6 +749,11 @@ automode:
 games:
     # Sets the nick of the Games service, if you're using it. This defaults to "games" if not defined.
     nick: Games
+
+    # Ident, host, and realname can also be specified here, but they may be overriden per-network.
+    #ident: games
+    #host: play.games
+    #realname: Games Service
 
     # Defines a fantasy prefix for the Games bot.
     prefix: "./"

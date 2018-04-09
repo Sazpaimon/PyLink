@@ -23,16 +23,19 @@ class HybridProtocol(TS6Protocol):
         f = self.irc.send
 
         # https://github.com/grawity/irc-docs/blob/master/server/ts6.txt#L80
+        # Note: according to hybrid source code, +p is paranoia, noknock,
+        # AND rfc1459-style private, though the last isn't documented.
         cmodes = {
             # TS6 generic modes:
             'op': 'o', 'halfop': 'h', 'voice': 'v', 'ban': 'b', 'key': 'k',
             'limit': 'l', 'moderated': 'm', 'noextmsg': 'n',
-            'secret': 's', 'topiclock': 't',
+            'secret': 's', 'topiclock': 't', 'private': 'p',
             # hybrid-specific modes:
             'blockcolor': 'c', 'inviteonly': 'i', 'noctcp': 'C',
             'regmoderated': 'M', 'operonly': 'O', 'regonly': 'R',
             'sslonly': 'S', 'banexception': 'e', 'noknock': 'p',
-            'registered': 'r', 'invex': 'I',
+            'registered': 'r', 'invex': 'I', 'paranoia': 'p',
+            'banexception': 'e',
             # Now, map all the ABCD type modes:
             '*A': 'beI', '*B': 'k', '*C': 'l', '*D': 'cimnprstCMORS'
         }
@@ -155,7 +158,7 @@ class HybridProtocol(TS6Protocol):
         # we know what modes it supports (indeed, this is a standard list).
         # <- CAPAB :UNDLN UNKLN KLN TBURST KNOCK ENCAP DLN IE EX HOPS CHW SVS CLUSTER EOB QS
         self.irc.caps = caps = args[0].split()
-        for required_cap in ('EX', 'IE', 'SVS', 'EOB', 'HOPS', 'QS', 'TBURST', 'SVS'):
+        for required_cap in ('SVS', 'EOB', 'HOPS', 'QS', 'TBURST'):
              if required_cap not in caps:
                  raise ProtocolError('%s not found in TS6 capabilities list; this is required! (got %r)' % (required_cap, caps))
 

@@ -106,18 +106,19 @@ def match(irc, channel, uids=None):
                 log.debug("(%s) automode: Filtered mode list of %s to %s (protocol:%s)",
                           irc.name, modes, outgoing_modes, irc.protoname)
 
-    # If the Automode bot is missing, send the mode through the PyLink server.
-    if modebot_uid not in irc.users:
-        modebot_uid = irc.sid
+    if outgoing_modes:
+        # If the Automode bot is missing, send the mode through the PyLink server.
+        if modebot_uid not in irc.users:
+            modebot_uid = irc.sid
 
-    log.debug("(%s) automode: sending modes from modebot_uid %s",
-              irc.name, modebot_uid)
+        log.debug("(%s) automode: sending modes from modebot_uid %s",
+                  irc.name, modebot_uid)
 
-    irc.proto.mode(modebot_uid, channel, outgoing_modes)
+        irc.proto.mode(modebot_uid, channel, outgoing_modes)
 
-    # Create a hook payload to support plugins like relay.
-    irc.callHooks([modebot_uid, 'AUTOMODE_MODE',
-                  {'target': channel, 'modes': outgoing_modes, 'parse_as': 'MODE'}])
+        # Create a hook payload to support plugins like relay.
+        irc.callHooks([modebot_uid, 'AUTOMODE_MODE',
+                      {'target': channel, 'modes': outgoing_modes, 'parse_as': 'MODE'}])
 
 def handle_join(irc, source, command, args):
     """
@@ -149,7 +150,7 @@ def getChannelPair(irc, source, chanpair, perm=None):
     """
     log.debug('(%s) Looking up chanpair %s', irc.name, chanpair)
     try:
-        network, channel = chanpair.split('#')
+        network, channel = chanpair.split('#', 1)
     except ValueError:
         raise ValueError("Invalid channel pair %r" % chanpair)
     channel = '#' + channel
@@ -183,13 +184,13 @@ def setacc(irc, source, args):
 
     Examples:
 
-    \x02SET #channel *!*@localhost ohv
+    \x02SETACC #channel *!*@localhost ohv
 
-    \x02SET #channel $account v
+    \x02SETACC #channel $account v
 
-    \x02SET othernet#channel $ircop:Network?Administrator qo
+    \x02SETACC othernet#channel $ircop:Network?Administrator qo
 
-    \x02SET #staffchan $channel:#mainchan:op o
+    \x02SETACC #staffchan $channel:#mainchan:op o
     """
 
     try:

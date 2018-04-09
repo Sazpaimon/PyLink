@@ -26,7 +26,7 @@ class UnrealProtocol(TS6BaseProtocol):
         self.protocol_caps |= {'slash-in-nicks', 'underscore-in-hosts'}
         # Set our case mapping (rfc1459 maps "\" and "|" together, for example)
         self.casemapping = 'ascii'
-        self.proto_ver = 4000
+        self.proto_ver = 4017
         self.min_proto_ver = 4000
         self.hook_map = {'UMODE2': 'MODE', 'SVSKILL': 'KILL', 'SVSMODE': 'MODE',
                          'SVS2MODE': 'MODE', 'SJOIN': 'JOIN', 'SETHOST': 'CHGHOST',
@@ -224,6 +224,7 @@ class UnrealProtocol(TS6BaseProtocol):
 
         if utils.isChannel(target):
 
+            modes = list(modes)  # Needed for indexing
             # Make sure we expand any PUIDs when sending outgoing modes...
             for idx, mode in enumerate(modes):
                 if mode[0][-1] in self.irc.prefixmodes:
@@ -445,7 +446,10 @@ class UnrealProtocol(TS6BaseProtocol):
         if not accountname.isdigit():
             self.irc.callHooks([uid, 'CLIENT_SERVICES_LOGIN', {'text': accountname}])
 
-        return {'uid': uid, 'ts': ts, 'nick': nick, 'realhost': realhost, 'host': host, 'ident': ident, 'ip': ip}
+        # parse_as is used here to prevent legacy user introduction from being confused
+        # with a nick change.
+        return {'uid': uid, 'ts': ts, 'nick': nick, 'realhost': realhost, 'host': host,
+                'ident': ident, 'ip': ip, 'parse_as': 'UID'}
 
     def handle_pass(self, numeric, command, args):
         # <- PASS :abcdefg

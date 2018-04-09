@@ -1,17 +1,18 @@
 Source: pylink
 Section: net
 Priority: optional
-Maintainer: James Lu <bitflip3@gmail.com>
+Maintainer: James Lu <james@overdrivenetworks.com>
 Build-Depends: debhelper (>= 9),
                dh-python,
                python3,
                python3-setuptools,
                python3-pypandoc,
                doxygen
-Standards-Version: 3.9.8
+Standards-Version: 4.1.4
 Homepage: https://github.com/GLolol/PyLink/
 X-Python3-Version: >= 3.4
-Vcs-Browser: https://github.com/GLolol/PyLink/tree/packaging/debian/sid
+Vcs-Browser: https://github.com/GLolol/PyLink/tree/packaging/debian/stretch
+Vcs-Git: https://github.com/GLolol/PyLink -b packaging/debian/stretch
 
 Package: pylink
 Architecture: all

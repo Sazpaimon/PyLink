@@ -11,11 +11,14 @@ PyLink is an extensible, plugin-based IRC services framework written in Python. 
 
 1) a replacement for the now-defunct Janus.
 
-2) a versatile framework and gateway to IRC.
+2) a versatile framework for developing IRC services.
 
 PyLink and any bundled software are licensed under the Mozilla Public License, version 2.0 ([LICENSE.MPL2](LICENSE.MPL2)). The corresponding documentation in the [docs/](docs/) folder is licensed under the Creative Attribution-ShareAlike 4.0 International License. ([LICENSE.CC-BY-SA-4.0](LICENSE.CC-BY-SA-4.0))
 
-## Support
+## Support the project
+[![Donate via PayPal](https://img.shields.io/badge/donate-paypal-50CAF2.svg)](https://www.paypal.me/jlucode)
+
+## Obtaining support
 
 **First, MAKE SURE you've read the [FAQ](docs/faq.md)!**
 
@@ -23,7 +26,7 @@ PyLink and any bundled software are licensed under the Mozilla Public License, v
 
 Please report any bugs you find to the [issue tracker](https://github.com/GLolol/PyLink/issues). Pull requests are open if you'd like to contribute, though new stuff generally goes to the **devel** branch.
 
-You can also find support via our IRC channels: `#PyLink @ irc.overdrivenetworks.com `([webchat][webchatlink]) or `#PyLink @ chat.freenode.net`. Ask your questions and be patient for a response.
+You can also find support via our IRC channel at `#PyLink @ irc.overdrivenetworks.com `([webchat][webchatlink]). Ask your questions and be patient for a response.
 
 ## Installation
 
@@ -36,13 +39,13 @@ You can also find support via our IRC channels: `#PyLink @ irc.overdrivenetworks
     * PyYAML (`pip3 install pyyaml`)
     * ircmatch (`pip3 install ircmatch`)
     * *For password encryption*: Passlib (`pip3 install passlib`)
-    * *For the servprotect plugin*: expiringdict (install this from [source](https://github.com/mailgun/expiringdict); installation is broken in pip due to [mailgun/expiringdict#13](https://github.com/mailgun/expiringdict/issues/13))
+    * *For the servprotect plugin*: expiringdict (`pip3 install expiringdict`)
 
 2) Clone the repository: `git clone https://github.com/GLolol/PyLink && cd PyLink`
 
 3) Pick your branch.
-    * By default you'll be on the **master** (stable) branch, which is mostly bugfix only (except when a new stable release is introduced). This means that new features or more intensive bug fixes may not always be included.
-    * Instead, the **devel** (pre-release) branch is where active development goes, and it can be accessed by running `git checkout devel` in your Git tree.
+    * By default you'll be on the **master** branch, which contains the latest stable code. This branch is recommended for production networks that don't require new features or intensive bug fixes as they are developed.
+    * The **devel** branch is where active development goes, and it can be accessed by running `git checkout devel` in your Git tree.
 
 4) Install PyLink using `python3 setup.py install` (global install) or `python3 setup.py install --user` (local install)
     * Note: `--user` is a *literal* string; *do not* replace it with your username.
@@ -62,7 +65,7 @@ Unofficial Ubuntu packages for PyLink are available via two PPAs for Ubuntu 14.0
 Upon installing the `pylink` package, example configuration and docs will be in `/usr/share/doc/pylink/examples` and `/usr/share/doc/pylink/docs` respectively. You can also install a local copy of the [PyLink API reference](https://pylink.github.io/) through the `pylink-doc` package.
 
 - Stable releases: [PyLink Stable PPA](https://launchpad.net/~tacocat/+archive/ubuntu/pylink)
-- Nightly builds (devel branch): [PyLink Nightly Builds PPA](https://launchpad.net/~tacocat/+archive/ubuntu/pylink-nightly)
+- Nightly builds (of the devel branch): [PyLink Nightly Builds PPA](https://launchpad.net/~tacocat/+archive/ubuntu/pylink-nightly) - Only supported on Ubuntu 16.04 and higher
 
 ## Configuration
 
@@ -82,7 +85,8 @@ These IRCds (in alphabetical order) are frequently tested and well supported. If
     - Supported channel, user, and prefix modes are negotiated on connect, but hotloading modules that change these is not supported. After changing module configuration, it is recommended to SQUIT PyLink to force a protocol renegotiation.
 * [Nefarious IRCu](https://github.com/evilnet/nefarious2) (2.0.0+) - module `p10`
     - Note: Both account cloaks (user and oper) and hashed IP cloaks are optionally supported (HOST_HIDING_STYLE settings 0 to 3). Make sure you configure PyLink to match your IRCd settings.
-* [UnrealIRCd](https://www.unrealircd.org/) 4.x - module `unreal`
+* [UnrealIRCd](https://www.unrealircd.org/) 4.x (4.0.12+) - module `unreal`
+    - UnrealIRCd 4.x before version 4.0.12 suffers from [bug #4890](https://bugs.unrealircd.org/view.php?id=4890) which causes hostname desyncs on servers not directly linked to PyLink (e.g. `pylink<->serverA<->serverB` creates desynced hostnames on server B). This problem is fixed by upgrading your IRCds.
     - Linking to UnrealIRCd 3.2 servers is only possible when using an UnrealIRCd 4.x server as a hub, with topology such as `pylink<->unreal4<->unreal3.2`. We nevertheless encourage you to upgrade so all your IRCds are running the same version.
 
 ### Extended support

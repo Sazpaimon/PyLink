@@ -15,6 +15,29 @@ from pylinkirc.log import log
 
 def _login(irc, source, username):
     """Internal function to process logins."""
+    # Mangle case before we start checking for login data.
+    accounts = {k.lower(): v for k, v in conf.conf['login'].get('accounts', {}).items()}
+
+    logindata = accounts.get(username.lower(), {})
+    network_filter = logindata.get('networks')
+    require_oper = logindata.get('require_oper', False)
+    hosts_filter = logindata.get('hosts', [])
+
+    if network_filter and irc.name not in network_filter:
+        irc.error("You are not authorized to log in to %r on this network." % username)
+        log.warning("(%s) Failed login to %r from %s (wrong network: networks filter says %r but we got %r)", irc.name, username, irc.getHostmask(source), ', '.join(network_filter), irc.name)
+        return
+
+    elif require_oper and not irc.isOper(source, allowAuthed=False):
+        irc.error("You must be opered to log in to %r." % username)
+        log.warning("(%s) Failed login to %r from %s (needs oper)", irc.name, username, irc.getHostmask(source))
+        return
+
+    elif hosts_filter and not any(irc.matchHost(host, source) for host in hosts_filter):
+        irc.error("Failed to log in to %r: hostname mismatch." % username)
+        log.warning("(%s) Failed login to %r from %s (hostname mismatch)", irc.name, username, irc.getHostmask(source))
+        return
+
     irc.users[source].account = username
     irc.reply('Successfully logged in as %s.' % username)
     log.info("(%s) Successful login to %r by %s",

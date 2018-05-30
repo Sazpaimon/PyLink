@@ -1,8 +1,23 @@
+pylink (1.3.0-0utopia1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * See https://github.com/jlu5/PyLink/blob/master/RELNOTES.md#pylink-130-2018-05-08
+    for a list of changes.
+  * Update Standards-Version (-> 4.1.4), email, Vcs-* links.
+
+ -- James Lu <james@overdrivenetworks.com>  Mon, 09 Apr 2018 07:28:15 -0700
+
 pylink (1.2.1-0utopia1ppa2) artful; urgency=medium
 
   * New stable release.
 
  -- James Lu <bitflip3@gmail.com>  Sat, 18 Nov 2017 01:57:47 -0800
+
+pylink (1.2.0-0utopia1~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+
+ -- James Lu <bitflip3@gmail.com>  Wed, 16 Aug 2017 16:50:14 -0700
 
 pylink (1.2.0-0utopia1ppa1) artful; urgency=medium
 

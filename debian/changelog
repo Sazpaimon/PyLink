@@ -1,3 +1,10 @@
+pylink (1.3.0-0utopia2) UNRELEASED; urgency=medium
+
+  * Remove B-D: python3-pypandoc, no longer needed as PyPI now natively
+    supports Markdown
+
+ -- James Lu <james@overdrivenetworks.com>  Fri, 01 Jun 2018 00:10:20 -0700
+
 pylink (1.3.0-0utopia1) UNRELEASED; urgency=medium
 
   * New upstream release.
